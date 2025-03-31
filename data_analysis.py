@@ -19,7 +19,7 @@ reviews_df.drop(columns=[col for col in columns_to_drop_reviews if col in review
 reviews_df = reviews_df.rename(columns={'id': 'movie_id'})
 
 # Ponowne połączenie z danymi o filmach
-movies_with_reviews = pd.merge(movies_df, reviews_df, left_on='id', right_on='movie_id', how='outer')
+movies_with_reviews = pd.merge(movies_df, reviews_df, left_on='id', right_on='movie_id', how='inner')
 # Usuwam duplikat kolumny
 movies_with_reviews.drop(columns=['movie_id'], inplace=True)
 
