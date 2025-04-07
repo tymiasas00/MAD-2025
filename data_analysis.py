@@ -2,6 +2,7 @@ import kagglehub
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import zscore
+import numpy as np
 
 # Pobieram dane z Kaggle
 path = kagglehub.dataset_download(
@@ -48,7 +49,7 @@ print('-' * 20)
 print(data.dtypes.value_counts())
 
 numeric_features = ['audienceScore', 'tomatoMeter',
-                    'runtimeMinutes', 'reviewScore']
+                    'runtimeMinutes']
 # Obliczanie podstawowych wartości
 min_values = data[numeric_features].min()  # Minimum
 max_values = data[numeric_features].max()  # Maksimum
@@ -84,22 +85,50 @@ print('-' * 20)
 
 # Histogramy dla cech numerycznych
 for column in numeric_features:
-    plt.figure(figsize=(8, 6))  # Size of each histogram plot
-    data[column].hist(bins=30, edgecolor='black')  # Plot histogram
-    plt.title(f"Histogram of {column}", fontsize=16)
-    plt.xlabel(column, fontsize=14)
-    plt.ylabel('Frequency', fontsize=14)
-    plt.show()
+    if column != 'runtimeMinutes':
+        plt.figure(figsize=(8, 6))
 
-# wykres słupkowy dla najczęstszych gatunków
-genre_counts = data['genre'].value_counts()
-plt.figure(figsize=(12, 8))  # Size of the plot
-genre_counts.head(10).plot(kind='bar', color='skyblue',
-                           edgecolor='black')  # Top 10 genres
-plt.title("Most Common Genres", fontsize=16)
+        values = data[column].dropna()
+        counts, bins = np.histogram(values, bins=30)
+        percentages = (counts / counts.sum()) * 100
+
+        plt.bar(bins[:-1], percentages, width=(bins[1] - bins[0]), edgecolor='black', align='edge')
+        plt.title(f"Histogram of {column}", fontsize=16)
+        plt.xlabel(column, fontsize=14)
+        plt.ylabel('Procent', fontsize=14)
+        plt.tight_layout()
+        plt.show()
+
+plt.figure(figsize=(8, 6))
+
+info = data['runtimeMinutes']
+counts, bins, patches = plt.hist(info, bins=50, edgecolor='black')
+total = counts.sum()
+percentages = (counts / total) * 100
+
+plt.clf()  # czyścimy poprzedni wykres
+
+# Rysujemy wykres z procentami
+plt.bar(bins[:-1], percentages, width=(bins[1] - bins[0]), align='edge', edgecolor='black')
+plt.xlim(0, 220)  # <- przenieśliśmy tutaj!
+plt.title("Histogram of runtime", fontsize=16)
+plt.xlabel("Runtime in minutes", fontsize=14)
+plt.ylabel("Frequency (%)", fontsize=14)
+plt.tight_layout()
+plt.show()
+
+# Przeliczenie gatunków na procenty
+genre_counts = data['genre'].value_counts(normalize=True) * 100
+
+# Wykres słupkowy dla top 10
+plt.figure(figsize=(12, 8))
+genre_counts.head(10).plot(kind='bar', color='skyblue', edgecolor='black')
+
+plt.title("Most Common Genres (percentage)", fontsize=16)
 plt.xlabel("Genre", fontsize=14)
-plt.ylabel("Number of Movies", fontsize=14)
-plt.xticks(rotation=45, ha='right')  # Rotate genre names for readability
+plt.ylabel("Percentage of Movies", fontsize=14)
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
 plt.show()
 
 # Procent braków
