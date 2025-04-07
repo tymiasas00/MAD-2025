@@ -66,11 +66,31 @@ Do analizy wybrano następujące zmienne:
 
 Zmienne \textbf{Ocena krytyków}, \textbf{Ocena widzów}, \textbf{Sentyment recenzji} oraz \textbf{Status krytyka} traktowane są jako stymulanty, ponieważ wyższe wartości wskazują na lepsze oceny. Pozostałe zmienne pełnią rolę atrybutów opisowych, które mogą wpływać na oceny filmów.
 
-\subsection{Wstępna analiza danych}
+\section{Wstępna analiza danych}
 
-\subsubsection{Statystyki opisowe}
-% Tabela z podstawowymi statystykami: średnia, mediana, min, max, odchylenie standardowe, skośność
-Wstępna analiza statystyczna obejmuje obliczenie podstawowych miar dla wybranych zmiennych, takich jak średnia, mediana, minimum, maksimum, odchylenie standardowe oraz skośność. Pozwoli to na zrozumienie rozkładu danych i identyfikację ewentualnych anomalii.
+\subsection{Statystyki opisowe}
+
+W pierwszej kolejności przeprowadzono analizę statystyk opisowych dla zmiennych numerycznych: \texttt{audienceScore}, \texttt{tomatoMeter} oraz \texttt{runtimeMinutes}. Wyniki przedstawiono w Tabeli~\ref{tab:stats}. 
+
+\begin{table}[h!]
+\centering
+\caption{Podstawowe statystyki opisowe dla wybranych zmiennych}
+\label{tab:stats}
+\begin{tabular}{lccc}
+\toprule
+Statystyka & audienceScore & tomatoMeter & runtimeMinutes \\
+\midrule
+Minimum    & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+Maksimum   & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+Średnia    & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+Mediana    & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+Odchylenie standardowe & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+Skośność   & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Wartości odczytane zostały z połączonego zbioru danych po oczyszczeniu z kolumn niezwiązanych bezpośrednio z analizą.
 
 
 \subsubsection{Wizualizacja danych}
