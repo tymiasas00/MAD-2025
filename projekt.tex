@@ -25,37 +25,68 @@
 \noindent \textbf{Słowa kluczowe:} analiza skupień, klasyfikacja, filmy, recenzje, Rotten Tomatoes, eksploracja danych
 
 \section{Wprowadzenie}
-% Krótkie wprowadzenie do problematyki – znaczenie analizy danych w kontekście opinii i trendów filmowych, dlaczego Rotten Tomatoes, krótki opis używanej metody (analiza skupień)
+
+W dobie rosnącej popularności platform streamingowych i serwisów z recenzjami, takich jak Rotten Tomatoes, analiza opinii o filmach stała się istotnym narzędziem w ocenie trendów kulturowych i preferencji odbiorców. Serwis Rotten Tomatoes gromadzi zarówno profesjonalne recenzje krytyków filmowych, jak i opinie zwykłych widzów, oferując cenny zbiór danych do analiz porównawczych. 
+
+Celem niniejszego projektu jest przeprowadzenie analizy skupień na zbiorze danych filmowych z Rotten Tomatoes, w celu wyodrębnienia grup filmów o podobnych cechach i ocenach. W szczególności interesuje nas, czy możliwe jest zaobserwowanie wyraźnych zależności między gatunkiem filmu, jego oceną, językiem, długością trwania, czy udziałem znanych reżyserów i topowych krytyków. Dodatkowym aspektem badania może być również analiza zmian w ocenach filmów na przestrzeni lat, jeśli dane na to pozwolą.
+
+Analiza obejmie zarówno oceny krytyków, jak i widzów, a także syntetyczne miary sentymentu recenzji tekstowych (pozytywna/negatywna). Zakładamy, że dzięki zastosowaniu metod eksploracyjnych, takich jak analiza skupień, możliwe będzie znalezienie interesujących grup filmów – np. tych, które cieszą się wysoką popularnością wśród widzów, ale są nisko oceniane przez krytyków. Jedną z hipotez, którą chcemy zweryfikować, jest założenie, że filmy z popularnych, „prostych” gatunków (np. komedie romantyczne, filmy akcji) uzyskują wyższe oceny od widzów niż od profesjonalnych recenzentów.
+
+Zbiór danych użyty w analizie pochodzi z publicznie dostępnego repozytorium na platformie Kaggle i został częściowo wstępnie przetworzony, co umożliwia przeprowadzenie analizy skupień z użyciem narzędzi języka Python.
+
 
 \section{Przedmiot badania}
 
 \subsection{Cel i zakres badania}
-% Co badacie, jaki jest główny cel, jakiego typu dane i jakie aspekty filmów analizujecie
+
+Celem niniejszego projektu jest analiza trendów oraz klasyfikacja filmów na podstawie recenzji z serwisu Rotten Tomatoes, z wykorzystaniem metod analizy skupień. Badanie obejmuje zarówno oceny krytyków, jak i widzów, a także inne atrybuty filmów, takie jak gatunek, długość trwania, reżyser, oryginalny język oraz sentyment recenzji tekstowych. Analiza skupień pozwoli na identyfikację grup filmów o podobnych cechach i ocenach, co może ujawnić ukryte zależności i wzorce w danych.
 
 \subsection{Przegląd literatury}
-% Co najmniej jedna pozycja literatury, która porusza podobną tematykę (np. klasyfikacja filmów, analiza recenzji, użycie analizy skupień itp.) + krótki opis
+
+Analiza recenzji filmowych z wykorzystaniem metod eksploracji danych jest przedmiotem licznych badań. Xu i in. \cite{xu2022} zastosowali techniki analizy skupień do wizualizacji danych z recenzji filmowych, co pozwoliło na lepsze zrozumienie opinii widzów. Verma i in. \cite{verma2021} wykorzystali głębokie sieci neuronowe do analizy sentymentu recenzji filmowych, osiągając wysoką dokładność w przewidywaniu ocen. Abimanyu i in. \cite{abimanyu2023} przeprowadzili analizę sentymentu recenzji z Rotten Tomatoes, stosując regresję logistyczną i selekcję cech metodą Information Gain, co pozwoliło na skuteczną klasyfikację opinii. Nugraha i in. \cite{nugraha2023} zastosowali zmodyfikowaną metodę zrównoważonego lasu losowego oraz Word2Vec do analizy sentymentu recenzji filmowych, uzyskując wysoką skuteczność klasyfikacji. Powyższe badania wskazują na efektywność metod analizy skupień i analizy sentymentu w eksploracji danych z recenzji filmowych.
 
 \subsection{Opis danych}
-% Link do źródła: \url{https://www.kaggle.com/datasets/andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews}
-% Krótkie przedstawienie co zawiera zbiór, ile ma rekordów, jakie typy danych (np. oceny, opisy, tagi)
+
+Dane wykorzystane w projekcie pochodzą z publicznie dostępnego zbioru na platformie Kaggle \cite{kaggle2025}, zawierającego obszerne informacje o filmach i ich recenzjach z serwisu Rotten Tomatoes. Zbiór obejmuje zarówno oceny krytyków, jak i widzów, a także metadane filmów, takie jak tytuł, gatunek, długość trwania, reżyser, oryginalny język oraz teksty recenzji. Dane te zostały wstępnie przetworzone w celu usunięcia brakujących wartości i nieistotnych kolumn, co umożliwia efektywną analizę.
 
 \subsection{Zmienne wybrane do analizy}
-% Opis i uzasadnienie wyboru co najmniej sześciu zmiennych (np. ocena krytyków, ocena użytkowników, liczba recenzji itp.)
-% Podział na stymulanty/destymulanty
+
+Do analizy wybrano następujące zmienne:
+
+\begin{itemize}
+    \item \textbf{Ocena krytyków (Critics' Score)}: średnia ocena filmu przyznana przez krytyków.
+    \item \textbf{Ocena widzów (Audience Score)}: średnia ocena filmu przyznana przez widzów.
+    \item \textbf{Gatunek (Genre)}: kategoria, do której przypisany jest film (np. dramat, komedia, akcja).
+    \item \textbf{Długość trwania (Runtime)}: czas trwania filmu w minutach.
+    \item \textbf{Reżyser (Director)}: nazwisko reżysera filmu.
+    \item \textbf{Oryginalny język (Original Language)}: język, w którym film został pierwotnie wyprodukowany.
+    \item \textbf{Sentyment recenzji (Review Sentiment)}: klasyfikacja recenzji tekstowych jako pozytywne lub negatywne.
+    \item \textbf{Status krytyka (Top Critic Status)}: informacja, czy krytyk jest uznawany za czołowego krytyka.
+\end{itemize}
+
+Zmienne \textbf{Ocena krytyków}, \textbf{Ocena widzów}, \textbf{Sentyment recenzji} oraz \textbf{Status krytyka} traktowane są jako stymulanty, ponieważ wyższe wartości wskazują na lepsze oceny. Pozostałe zmienne pełnią rolę atrybutów opisowych, które mogą wpływać na oceny filmów.
 
 \subsection{Wstępna analiza danych}
 
 \subsubsection{Statystyki opisowe}
 % Tabela z podstawowymi statystykami: średnia, mediana, min, max, odchylenie standardowe, skośność
+Wstępna analiza statystyczna obejmuje obliczenie podstawowych miar dla wybranych zmiennych, takich jak średnia, mediana, minimum, maksimum, odchylenie standardowe oraz skośność. Pozwoli to na zrozumienie rozkładu danych i identyfikację ewentualnych anomalii.
+
 
 \subsubsection{Wizualizacja danych}
 % Wstawienie histogramów, boxplotów itp.
+Do wizualizacji danych wykorzystane zostaną histogramy, wykresy pudełkowe (boxplot) oraz wykresy rozrzutu, co umożliwi graficzne przedstawienie rozkładu zmiennych oraz zależności między nimi.
+
 
 \subsubsection{Braki danych}
 % Jakie dane są brakujące i jak je uzupełniono/usunięto
+Analiza brakujących danych pozwoli na zidentyfikowanie ewentualnych niekompletnych rekordów. W zależności od skali braków, zastosowane zostaną odpowiednie metody ich uzupełnienia lub usunięcia.
+
 
 \subsubsection{Obserwacje odstające}
 % Czy występują, jak zostały obsłużone
+Identyfikacja obserwacji odstających zostanie przeprowadzona za pomocą metod statystycznych, takich jak analiza rozkładu oraz wykresy pudełkowe. Wykryte wartości odstające zostaną poddane analizie w celu podjęcia decyzji o ich ewentualnym usunięciu lub pozostawieniu w zbiorze danych.
+
 
 \section{Opis zastosowanych metod}
 
@@ -78,8 +109,18 @@
 % Możliwe kierunki rozwoju analizy, ograniczenia
 
 \section{Bibliografia}
-% \begin{thebibliography}{9}
-% \bibitem{autor2020} Nazwisko I., Tytuł pracy, Czasopismo/Raport, Rok.
-% \end{thebibliography}
+\begin{thebibliography}{9}
+
+\bibitem{xu2022} Xu, Y., et al. (2022). Application of Cluster Analysis Technology in Visualization Research of Movie Review Data. \textit{Computational Intelligence and Neuroscience}. \url{https://doi.org/10.1155/2022/7756896}.
+
+\bibitem{verma2021} Verma, V., Gupta, A., Kumawat, S. (2021). Sentiment Analysis for Movie Ratings Using Deep Learning. In: \textit{Data Engineering and Intelligent Computing}. Springer, Singapore. \url{https://doi.org/10.1007/978-981-16-0171-2_6}.
+
+\bibitem{abimanyu2023} Abimanyu, A. J., Dwifebri, M., Astuti, H. (2023). Sentiment Analysis of Rotten Tomatoes Movie Reviews Using Logistic Regression and Information Gain Feature Selection. \textit{Journal of Physics: Conference Series}, 2630(1). \url{https://doi.org/10.1088/1742-6596/2630/1/012004}.
+
+\bibitem{nugraha2023} Nugraha, A. T., Yuwono, H. (2023). Sentiment Analysis of Rotten Tomatoes Movie Reviews Using Modified Balanced Random Forest and Word2Vec. \textit{TELKOMNIKA Telecommunication, Computing, Electronics and Control}, 21(1). \url{https://doi.org/10.12928/telkomnika.v21i1.23642}.
+
+\bibitem{kaggle2025} Andrezaza. (2023). Clapper: Massive Rotten Tomatoes Movies and Reviews. \textit{Kaggle}. \url{https://www.kaggle.com/datasets/andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews}
+
+\end{thebibliography}
 
 \end{document}
