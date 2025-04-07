@@ -1,6 +1,7 @@
 import kagglehub
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.stats import zscore
 
 # Pobieram dane z Kaggle
 path = kagglehub.dataset_download(
@@ -47,12 +48,14 @@ print('-' * 20)
 print(data.dtypes.value_counts())
 
 numeric_features = ['audienceScore', 'tomatoMeter',
-                    'runtimeMinutes',]
+                    'runtimeMinutes', 'reviewScore']
 # Obliczanie podstawowych wartości
 min_values = data[numeric_features].min()  # Minimum
 max_values = data[numeric_features].max()  # Maksimum
 mean_values = data[numeric_features].mean()  # Średnia
 median_values = data[numeric_features].median()  # Mediana
+std_values = data[numeric_features].std() # Odchylenie Standardowe
+skewness_values = data[numeric_features].skew() # Skłonność
 
 # Wyświetlanie wyników
 print("Minimum:")
@@ -69,6 +72,14 @@ print('-' * 20)
 
 print("Mediana:")
 print(median_values)
+print('-' * 20)
+
+print("Odchylenie standardowe:")
+print(std_values)
+print('-' * 20)
+
+print("Skośność:")
+print(skewness_values)
 print('-' * 20)
 
 # Histogramy dla cech numerycznych
@@ -90,3 +101,17 @@ plt.xlabel("Genre", fontsize=14)
 plt.ylabel("Number of Movies", fontsize=14)
 plt.xticks(rotation=45, ha='right')  # Rotate genre names for readability
 plt.show()
+
+# Procent braków
+missing_percent = data.isnull().mean() * 100
+print("Braki danych (%):")
+print(missing_percent[missing_percent > 0])
+print('-' * 20)
+
+# Wstępna detekcja obserwacji odstających
+z_scores = data[numeric_features].apply(zscore)
+outliers = (abs(z_scores) > 3).sum()
+
+print("Liczba obserwacji odstających dla każdej zmiennej:")
+print(outliers)
+print('-' * 20)
