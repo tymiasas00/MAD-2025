@@ -2,7 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-movies_with_reviews = pd.read_csv('movies_with_reviews.csv')
+movies_with_reviews = pd.read_csv('movies_grouped.csv')
+
 
 # Agregacja: jedna wartość na film
 agg_funcs = {
@@ -37,12 +38,26 @@ plt.ylabel('Liczba filmów')
 plt.tight_layout()
 plt.show()
 
+
+
+
 # Wykres słupkowy dla najczęstszych gatunków
 plt.figure(figsize=(10, 5))
+movies_grouped['genre'] = movies_grouped['genre'].str.split(r'[|,]').str[0]
 top_genres = movies_grouped['genre'].value_counts().head(10)
 sns.barplot(x=top_genres.values, y=top_genres.index, palette='muted')
 plt.title('Top 10 najczęstszych gatunków filmowych (na podstawie unikalnych tytułów)')
 plt.xlabel('Liczba filmów')
+plt.ylabel('Gatunek')
+plt.tight_layout()
+plt.show()
+
+# Wykres słupkowy: średnia wartość tomatoMeter dla każdego gatunku
+plt.figure(figsize=(10, 5))
+avg_tomato_by_genre = movies_grouped.groupby('genre')['tomatoMeter'].mean().sort_values(ascending=False).head(10)
+sns.barplot(x=avg_tomato_by_genre.values, y=avg_tomato_by_genre.index, palette='Paired')
+plt.title('Średnia wartość tomatoMeter dla 10 najpopularniejszych gatunków')
+plt.xlabel('Średnia wartość tomatoMeter')
 plt.ylabel('Gatunek')
 plt.tight_layout()
 plt.show()

@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Wczytanie przesłanych plików próbki
-movies_df = pd.read_csv('rotten_tomatoes_movies.csv')
-reviews_df = pd.read_csv('rotten_tomatoes_movie_reviews.csv')
+movies_df = pd.read_csv('movies_grouped.csv')
+reviews_df = pd.read_csv('movies_grouped.csv')
 
 # Usunięcie niepotrzebnych kolumn z movies_df
 columns_to_drop_movies = [
