@@ -1,13 +1,6 @@
 import kagglehub
-import matplotlib.pyplot as plt
 import pandas as pd
-
-# Wczytanie przesłanych plików próbki
-movies_df = pd.read_csv('movies_grouped.csv')
-reviews_df = pd.read_csv('movies_grouped.csv')
-from scipy.stats import zscore
-import numpy as np
-
+from  changing_original_score import parse_original_score
 # Pobieram dane z Kaggle
 path = kagglehub.dataset_download(
     "andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews")
@@ -35,116 +28,79 @@ print(data.isnull().sum())
 # Usunięcie niepotrzebnych kolumn z movies
 columns_to_drop = [
     'rating', 'ratingContents',
-    'boxOffice', 'writer', 'distributor', 'soundMix', 'reviewState', 'reviewUrl'
+    'boxOffice', 'writer', 'distributor', 'soundMix', 'reviewState', 'reviewUrl',
+    'reviewText','title','reviewId','creationDate','releaseDateStreaming','releaseDateTheaters',
+    'publicatioName',
 ]
 data = data.drop(columns=columns_to_drop)
 
-# podstawowe informacje o połączonym zbiorze po usunięciu kolumn
-print(data.info())
-print('-' * 20)
-print(data.head())
-print('-' * 20)
-print(data.describe())
-print('-' * 20)
-print(data.columns)
-print('-' * 20)
-print(data.isnull().sum())
-print('-' * 20)
-print(data.dtypes.value_counts())
+# oScore = data['originalScore']
+# oScore.to_csv('original_score.csv', index=False)
+data['originalScore'] = data['originalScore'].apply(parse_original_score)
+data = data.dropna()
+sentiment_map = {'POSITIVE': 1, 'NEGATIVE': 0}
+isTopCritic_map = {True: 1, False: 0}
+data['scoreSentiment'] = data['scoreSentiment'].map(sentiment_map)
+data['isTopCritic'] = data['isTopCritic'].map(isTopCritic_map)
+data.to_csv('reviews_with_movie_info.csv', index=False)
+movies_data = {
+    'id': [],
+    'tomatoMeter':[],
+    'audienceScore':[],
+    'runtimeMinutes':[],
+    'scoreSentiment':[],
+    'genre':[],
+    'originalLanguage':[],
+    'director':[],
+    'topCriticRatio':[],
+    'min_originalScore':[],
+    'max_originalScore':[],
+    'mean_originalScore':[],
+    'median_originalScore':[],
+}
 
-numeric_features = ['audienceScore', 'tomatoMeter',
-                    'runtimeMinutes']
-# Obliczanie podstawowych wartości
-min_values = data[numeric_features].min()  # Minimum
-max_values = data[numeric_features].max()  # Maksimum
-mean_values = data[numeric_features].mean()  # Średnia
-median_values = data[numeric_features].median()  # Mediana
-std_values = data[numeric_features].std() # Odchylenie Standardowe
-skewness_values = data[numeric_features].skew() # Skłonność
+movie_id = 'adrift_2018' # Autorytarnie wybieram pierwsze id
 
-# Wyświetlanie wyników
-print("Minimum:")
-print(min_values)
-print('-' * 20)
+movie_sentiment_score = []
+movie_isTopCritic = []
+movie_originalScore = []
+for index, row in data.iterrows():
+    if row['id'] == movie_id:
+        movie_tomato_meter=row['tomatoMeter']
+        movie_audience_score=row['audienceScore']
+        movie_sentiment_score.append(row['scoreSentiment'])
+        movie_originalScore.append(row['originalScore'])
+        runtime_minutes=row['runtimeMinutes']
+        movie_isTopCritic.append(row['isTopCritic'])
+        original_language=row['originalLanguage']
+        director=row['director']
+        genre=row['genre']
+    else:
+        movies_data['id'].append(movie_id)
+        movies_data['tomatoMeter'].append(movie_tomato_meter)
+        movies_data['audienceScore'].append(movie_audience_score)
+        movies_data['scoreSentiment'].append(sum(movie_sentiment_score)/len(movie_sentiment_score))
+        movies_data['runtimeMinutes'].append(runtime_minutes)
+        movies_data['genre'].append(genre)
+        movies_data['originalLanguage'].append(original_language)
+        movies_data['director'].append(director)
+        movies_data['topCriticRatio'].append(sum(movie_isTopCritic) / len(movie_isTopCritic))
+        movies_data['min_originalScore'].append(min(movie_originalScore))
+        movies_data['max_originalScore'].append(max(movie_originalScore))
+        movies_data['mean_originalScore'].append(sum(movie_originalScore) / len(movie_originalScore))
+        movies_data['median_originalScore'].append(pd.Series(movie_originalScore).median())
 
-print("Maksimum:")
-print(max_values)
-print('-' * 20)
+        # Czyszczę tabelki i zmieniam id, które będę badał
+        movie_id = row['id']
+        movie_tomato_meter = row['tomatoMeter']
+        movie_audience_score = row['audienceScore']
+        movie_sentiment_score = [row['scoreSentiment']]
+        runtime_minutes = row['runtimeMinutes']
+        genre = row['genre']
+        director = row['director']
+        original_language = row['originalLanguage']
+        movie_isTopCritic = [row['isTopCritic']]
+        movie_originalScore = [row['originalScore']]
 
-print("Średnia:")
-print(mean_values)
-print('-' * 20)
+movies_data = pd.DataFrame(movies_data)
 
-print("Mediana:")
-print(median_values)
-print('-' * 20)
-
-print("Odchylenie standardowe:")
-print(std_values)
-print('-' * 20)
-
-print("Skośność:")
-print(skewness_values)
-print('-' * 20)
-
-# Histogramy dla cech numerycznych
-for column in numeric_features:
-    if column != 'runtimeMinutes':
-        plt.figure(figsize=(8, 6))
-
-        values = data[column].dropna()
-        counts, bins = np.histogram(values, bins=30)
-        percentages = (counts / counts.sum()) * 100
-
-        plt.bar(bins[:-1], percentages, width=(bins[1] - bins[0]), edgecolor='black', align='edge')
-        plt.title(f"Histogram of {column}", fontsize=16)
-        plt.xlabel(column, fontsize=14)
-        plt.ylabel('Procent', fontsize=14)
-        plt.tight_layout()
-        plt.show()
-
-plt.figure(figsize=(8, 6))
-
-info = data['runtimeMinutes']
-counts, bins, patches = plt.hist(info, bins=50, edgecolor='black')
-total = counts.sum()
-percentages = (counts / total) * 100
-
-plt.clf()  # czyścimy poprzedni wykres
-
-# Rysujemy wykres z procentami
-plt.bar(bins[:-1], percentages, width=(bins[1] - bins[0]), align='edge', edgecolor='black')
-plt.xlim(0, 220)  # <- przenieśliśmy tutaj!
-plt.title("Histogram of runtime", fontsize=16)
-plt.xlabel("Runtime in minutes", fontsize=14)
-plt.ylabel("Frequency (%)", fontsize=14)
-plt.tight_layout()
-plt.show()
-
-# Przeliczenie gatunków na procenty
-genre_counts = data['genre'].value_counts(normalize=True) * 100
-
-# Wykres słupkowy dla top 10
-plt.figure(figsize=(12, 8))
-genre_counts.head(10).plot(kind='bar', color='skyblue', edgecolor='black')
-
-plt.title("Most Common Genres (percentage)", fontsize=16)
-plt.xlabel("Genre", fontsize=14)
-plt.ylabel("Percentage of Movies", fontsize=14)
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-plt.show()
-
-# Procent braków
-missing_percent = data.isnull().mean() * 100
-print("Braki danych (%):")
-print(missing_percent[missing_percent > 0])
-print('-' * 20)
-
-# Wstępna detekcja obserwacji odstających
-z_scores = data[numeric_features].apply(zscore)
-outliers = (abs(z_scores) > 3).sum()
-
-print("Liczba obserwacji odstających dla każdej zmiennej:")
-print(outliers)
-print('-' * 20)

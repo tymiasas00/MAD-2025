@@ -3,19 +3,21 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-# 1. Wczytaj dane
-data = pd.read_csv('movies_grouped.csv')
+from itertools import combinations
+from data_analysis import movies_data
 
 # 2. Wybierz tylko kolumny numeryczne do klasteryzacji
-features = ['audienceScore', 'tomatoMeter', 'runtimeMinutes']
+features = [
+    'audienceScore', 'tomatoMeter', 'runtimeMinutes', 'scoreSentiment', 'topCriticRatio',
+    'min_originalScore', 'max_originalScore', 'mean_originalScore', 'median_originalScore'
+]
 
 # 3. Zachowaj tylko wiersze bez braków danych
-data_clean = data[features].dropna()
+data_clean = movies_data.dropna(subset=features).copy()
 
 # 4. Standaryzacja danych
 scaler = StandardScaler()
-scaled_features = scaler.fit_transform(data_clean)
+scaled_features = scaler.fit_transform(data_clean[features])
 
 # 5. Metoda łokcia – wybór liczby klastrów
 inertia = []
@@ -36,27 +38,30 @@ plt.tight_layout()
 plt.show()
 
 # 7. Trenuj KMeans z wybraną liczbą klastrów (np. 3)
-optimal_k = 3
-kmeans_final = KMeans(n_clusters=optimal_k, random_state=42)
-data_clean['kmeans_cluster'] = kmeans_final.fit_predict(scaled_features)
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+data_clean['kmeans_cluster'] = kmeans.fit_predict(scaled_features)
 
 # 8. Dołącz etykiety klastrów do oryginalnego dataframe
-data.loc[data_clean.index, 'kmeans_cluster'] = data_clean['kmeans_cluster']
+movies_data.loc[data_clean.index, 'kmeans_cluster'] = data_clean['kmeans_cluster']
 
-# 9. Zapisz dane z klastrami
-data.to_csv('movies_clustered.csv', index=False)
+# # 9. Zapisz dane z klastrami
+# data.to_csv('movies_clustered.csv', index=False)
 
 # 10. Wizualizacja
-plt.figure(figsize=(8, 5))
-sns.scatterplot(
-    x=data['audienceScore'],
-    y=data['tomatoMeter'],
-    hue=data['kmeans_cluster'],
-    palette='Set2'
-)
-plt.title('K-means: audienceScore vs tomatoMeter')
-plt.xlabel('Audience Score')
-plt.ylabel('Tomato Meter')
-plt.legend(title='Klaster')
-plt.tight_layout()
-plt.show()
+for x_feature, y_feature in combinations(features, 2):
+    plt.figure(figsize=(7, 5))
+    sns.scatterplot(
+        data=data_clean,
+        x=x_feature,
+        y=y_feature,
+        hue='kmeans_cluster',
+        palette='Set2',
+        alpha=0.7
+    )
+    plt.title(f'KMeans: {x_feature} vs {y_feature}')
+    plt.xlabel(x_feature)
+    plt.ylabel(y_feature)
+    plt.legend(title='Klaster')
+    plt.tight_layout()
+    plt.savefig(f'kmeans_{x_feature}_vs_{y_feature}.png')  # Zapisz jako plik
+    plt.show()  # Pokaż interaktywnie
