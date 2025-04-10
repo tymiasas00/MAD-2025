@@ -1,4 +1,10 @@
-from data_analysis import *
+from data_analysis import movies_data  # Import przetworzonego DataFrame
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import zscore
+
+# Przypisanie danych do zmiennej
+data = movies_data
 
 # podstawowe informacje o połączonym zbiorze po usunięciu kolumn
 print(data.info())
@@ -13,15 +19,14 @@ print(data.isnull().sum())
 print('-' * 20)
 print(data.dtypes.value_counts())
 
-numeric_features = ['audienceScore', 'tomatoMeter',
-                    'runtimeMinutes']
+numeric_features = ['audienceScore', 'tomatoMeter', 'runtimeMinutes']
 # Obliczanie podstawowych wartości
 min_values = data[numeric_features].min()  # Minimum
 max_values = data[numeric_features].max()  # Maksimum
 mean_values = data[numeric_features].mean()  # Średnia
 median_values = data[numeric_features].median()  # Mediana
-std_values = data[numeric_features].std() # Odchylenie Standardowe
-skewness_values = data[numeric_features].skew() # Skłonność
+std_values = data[numeric_features].std()  # Odchylenie standardowe
+skewness_values = data[numeric_features].skew()  # Skośność
 
 # Wyświetlanie wyników
 print("Minimum:")

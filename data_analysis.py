@@ -38,11 +38,22 @@ data = data.drop(columns=columns_to_drop)
 # oScore.to_csv('original_score.csv', index=False)
 data['originalScore'] = data['originalScore'].apply(parse_original_score)
 data = data.dropna()
+
+# Usuwanie wartości odstających za pomocą IQR
+Q1 = data[['tomatoMeter', 'audienceScore', 'runtimeMinutes', 'originalScore']].quantile(0.25)
+Q3 = data[['tomatoMeter', 'audienceScore', 'runtimeMinutes', 'originalScore']].quantile(0.75)
+IQR = Q3 - Q1
+
+# Filtruj dane, usuwając wartości odstające
+data = data[~((data[['tomatoMeter', 'audienceScore', 'runtimeMinutes', 'originalScore']] < (Q1 - 1.5 * IQR)) | 
+              (data[['tomatoMeter', 'audienceScore', 'runtimeMinutes', 'originalScore']] > (Q3 + 1.5 * IQR))).any(axis=1)]
+
 sentiment_map = {'POSITIVE': 1, 'NEGATIVE': 0}
 isTopCritic_map = {True: 1, False: 0}
 data['scoreSentiment'] = data['scoreSentiment'].map(sentiment_map)
 data['isTopCritic'] = data['isTopCritic'].map(isTopCritic_map)
 data.to_csv('reviews_with_movie_info.csv', index=False)
+
 movies_data = {
     'id': [],
     'tomatoMeter':[],

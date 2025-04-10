@@ -63,5 +63,5 @@ for x_feature, y_feature in combinations(features, 2):
     plt.ylabel(y_feature)
     plt.legend(title='Klaster')
     plt.tight_layout()
-    plt.savefig(f'kmeans_{x_feature}_vs_{y_feature}.png')  # Zapisz jako plik
+    #plt.savefig(f'kmeans_{x_feature}_vs_{y_feature}.png')  # Zapisz jako plik
     plt.show()  # Pokaż interaktywnie

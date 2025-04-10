@@ -5,9 +5,10 @@ from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
+from data_analysis import movies_data  # Import przetworzonego DataFrame
 
-# 1. Wczytaj dane
-data = pd.read_csv('movies_grouped.csv')
+# 1. Wczytaj oczyszczony DataFrame z data_analysis.py
+data = movies_data
 
 # 2. Wybierz tylko kolumny numeryczne do klasteryzacji
 features = ['audienceScore', 'tomatoMeter', 'runtimeMinutes']

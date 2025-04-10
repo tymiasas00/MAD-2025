@@ -5,9 +5,10 @@ import seaborn as sns
 import scipy.cluster.hierarchy as sch
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
+from data_analysis import movies_data  # Import przetworzonego DataFrame
 
-# Wczytanie danych (przykład, dostosuj do swojej lokalizacji pliku)
-movies_with_reviews = pd.read_csv('movies_grouped.csv')
+# Wczytanie danych bezpośrednio z data_analysis.py
+movies_with_reviews = movies_data
 
 # Przygotowanie danych: wybór tylko potrzebnych kolumn
 cluster_data = movies_with_reviews[['audienceScore', 'tomatoMeter', 'runtimeMinutes']].dropna()
