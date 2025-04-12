@@ -27,7 +27,7 @@ scaled_data = scaler.fit_transform(data_clean[features])
 # Dendrogram – do oceny liczby klastrów
 plt.figure(figsize=(10, 7))
 sch.dendrogram(sch.linkage(scaled_data, method='ward'))
-plt.title('Dendrogram')
+plt.title('Dendrogram – wszystkie cechy')
 plt.xlabel('Filmy')
 plt.ylabel('Odległość')
 plt.tight_layout()
@@ -37,15 +37,24 @@ plt.show()
 hierarchical = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
 data_clean['hierarchical_cluster'] = hierarchical.fit_predict(scaled_data)
 
-# Dodanie etykiet klastrów do danych
-movies_with_reviews['hierarchical_cluster'] = hierarchical_labels
+# Dołączenie etykiet klastrów do oryginalnego DataFrame
+movies_data.loc[data_clean.index, 'hierarchical_cluster'] = data_clean['hierarchical_cluster']
 
-# Wizualizacja wyników klasteryzacji hierarchicznej
-plt.figure(figsize=(10, 7))
-sns.scatterplot(x=movies_with_reviews['audienceScore'], y=movies_with_reviews['tomatoMeter'],
-                hue=movies_with_reviews['hierarchical_cluster'], palette='tab10', s=100)
-plt.title('Klasteryzacja Hierarchiczna')
-plt.xlabel('Audience Score')
-plt.ylabel('Tomato Meter')
-plt.legend(title='Klaster')
-plt.show()
+# Wizualizacja: wszystkie możliwe pary cech
+for x_feature, y_feature in combinations(features, 2):
+    plt.figure(figsize=(7, 5))
+    sns.scatterplot(
+        data=data_clean,
+        x=x_feature,
+        y=y_feature,
+        hue='hierarchical_cluster',
+        palette='Set1',
+        alpha=0.7
+    )
+    plt.title(f'Hierarchiczna klasteryzacja: {x_feature} vs {y_feature}')
+    plt.xlabel(x_feature)
+    plt.ylabel(y_feature)
+    plt.legend(title='Klaster')
+    plt.tight_layout()
+    # plt.savefig(f'hierarchical_{x_feature}_vs_{y_feature}.png')  # opcjonalnie zapis
+    plt.show()
