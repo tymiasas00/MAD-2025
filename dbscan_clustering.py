@@ -4,27 +4,33 @@ import seaborn as sns
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
+from itertools import combinations
 import numpy as np
-from data_analysis import movies_data  # Import przetworzonego DataFrame
+from data_analysis import movies_data  # Zakładamy gotowy DataFrame
 
-# 1. Wczytaj oczyszczony DataFrame z data_analysis.py
-data = movies_data
+# Parametry DBSCAN
+eps_value = 1  # wartość do zmiany po analizie wykresu k-Distance
+min_samples_value = 5
 
-# 2. Wybierz tylko kolumny numeryczne do klasteryzacji
-features = ['audienceScore', 'tomatoMeter', 'runtimeMinutes']
-data_clean = data[features].dropna().copy()
+# Lista cech
+features = [
+    'audienceScore', 'tomatoMeter', 'runtimeMinutes', 'scoreSentiment', 'topCriticRatio',
+    'min_originalScore', 'max_originalScore', 'mean_originalScore', 'median_originalScore'
+]
 
-# 3. Standaryzacja danych
+# Oczyszczanie danych
+data_clean = movies_data.dropna(subset=features).copy()
+
+# Standaryzacja
 scaler = StandardScaler()
-scaled_features = scaler.fit_transform(data_clean)
+scaled_data = scaler.fit_transform(data_clean[features])
 
-# 4. Wybór dobrego eps (odległość sąsiedztwa) – wykres k-Distance
+# Wykres k-Distance do wyboru eps
 neighbors = NearestNeighbors(n_neighbors=5)
-neighbors_fit = neighbors.fit(scaled_features)
-distances, indices = neighbors_fit.kneighbors(scaled_features)
-
-# Sortuj i narysuj – pomoże dobrać eps
+neighbors_fit = neighbors.fit(scaled_data)
+distances, indices = neighbors_fit.kneighbors(scaled_data)
 distances = np.sort(distances[:, 4])
+
 plt.figure(figsize=(8, 5))
 plt.plot(distances)
 plt.title('k-Distance Graph (do wyboru eps)')
@@ -34,30 +40,28 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-# 5. Dopasuj DBSCAN – ustal eps na podstawie wykresu powyżej
-# UWAGA: warto najpierw poeksperymentować z wartością eps!
-dbscan = DBSCAN(eps=0.35, min_samples=5)
-clusters = dbscan.fit_predict(scaled_features)
+# Dopasowanie DBSCAN
+dbscan = DBSCAN(eps=eps_value, min_samples=min_samples_value)
+data_clean['dbscan_cluster'] = dbscan.fit_predict(scaled_data)
 
-# 6. Dodaj klaster do danych
-data_clean['dbscan_cluster'] = clusters
+# Dodanie etykiet do oryginalnego DataFrame
+movies_data.loc[data_clean.index, 'dbscan_cluster'] = data_clean['dbscan_cluster']
 
-# 7. Zapisz dane z klastrami
-data_clean.to_csv('movies_dbscan_clustered.csv', index=False)
-
-# 8. Wizualizacja wyników DBSCAN (2 cechy)
-plt.figure(figsize=(8, 5))
-sns.scatterplot(
-    data=data_clean,
-    x='audienceScore',
-    y='tomatoMeter',
-    hue='dbscan_cluster',
-    palette='Set2',
-    legend='full'
-)
-plt.title('DBSCAN: audienceScore vs tomatoMeter')
-plt.xlabel('Audience Score')
-plt.ylabel('Tomato Meter')
-plt.legend(title='Klaster')
-plt.tight_layout()
-plt.show()
+# Wizualizacja wszystkich możliwych par
+for x_feature, y_feature in combinations(features, 2):
+    plt.figure(figsize=(7, 5))
+    sns.scatterplot(
+        data=data_clean,
+        x=x_feature,
+        y=y_feature,
+        hue='dbscan_cluster',
+        palette='tab10',
+        alpha=0.7
+    )
+    plt.title(f'DBSCAN: {x_feature} vs {y_feature}')
+    plt.xlabel(x_feature)
+    plt.ylabel(y_feature)
+    plt.legend(title='Klaster')
+    plt.tight_layout()
+    # plt.savefig(f'dbscan_{x_feature}_vs_{y_feature}.png')  # opcjonalnie
+    plt.show()
