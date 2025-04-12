@@ -27,6 +27,7 @@ for col in numeric_cols:
     plt.xlabel(col)
     plt.ylabel('Liczba filmów')
     plt.tight_layout()
+    plt.savefig("histogram_scores.png", dpi=300, bbox_inches="tight")
     plt.show()
 
 plt.figure(figsize=(8, 4))
@@ -36,6 +37,7 @@ plt.title('Histogram: runtimeMinutes')
 plt.xlabel('runtimeMinutes')
 plt.ylabel('Liczba filmów')
 plt.tight_layout()
+plt.savefig("runtimeMinutes.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 
@@ -50,6 +52,7 @@ plt.title('Top 10 najczęstszych gatunków filmowych (na podstawie unikalnych ty
 plt.xlabel('Liczba filmów')
 plt.ylabel('Gatunek')
 plt.tight_layout()
+plt.savefig("genre_distribution.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 # Wykres słupkowy: średnia wartość tomatoMeter dla każdego gatunku
@@ -60,4 +63,5 @@ plt.title('Średnia wartość tomatoMeter dla 10 najpopularniejszych gatunków')
 plt.xlabel('Średnia wartość tomatoMeter')
 plt.ylabel('Gatunek')
 plt.tight_layout()
+plt.savefig("score_by_genre_distribution.png", dpi=300, bbox_inches="tight")
 plt.show()

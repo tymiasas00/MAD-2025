@@ -44,24 +44,25 @@ plt.show()
 dbscan = DBSCAN(eps=eps_value, min_samples=min_samples_value)
 data_clean['dbscan_cluster'] = dbscan.fit_predict(scaled_data)
 
-# Dodanie etykiet do oryginalnego DataFrame
-movies_data.loc[data_clean.index, 'dbscan_cluster'] = data_clean['dbscan_cluster']
+# 6. Dodaj klaster do danych
+data_clean['dbscan_cluster'] = clusters
 
-# Wizualizacja wszystkich możliwych par
-for x_feature, y_feature in combinations(features, 2):
-    plt.figure(figsize=(7, 5))
-    sns.scatterplot(
-        data=data_clean,
-        x=x_feature,
-        y=y_feature,
-        hue='dbscan_cluster',
-        palette='tab10',
-        alpha=0.7
-    )
-    plt.title(f'DBSCAN: {x_feature} vs {y_feature}')
-    plt.xlabel(x_feature)
-    plt.ylabel(y_feature)
-    plt.legend(title='Klaster')
-    plt.tight_layout()
-    # plt.savefig(f'dbscan_{x_feature}_vs_{y_feature}.png')  # opcjonalnie
-    plt.show()
+# 7. Zapisz dane z klastrami
+data_clean.to_csv('movies_dbscan_clustered.csv', index=False)
+
+# 8. Wizualizacja wyników DBSCAN (2 cechy)
+plt.figure(figsize=(8, 5))
+sns.scatterplot(
+    data=data_clean,
+    x='audienceScore',
+    y='tomatoMeter',
+    hue='dbscan_cluster',
+    palette='Set2',
+    legend='full'
+)
+plt.title('DBSCAN: audienceScore vs tomatoMeter')
+plt.xlabel('Audience Score')
+plt.ylabel('Tomato Meter')
+plt.legend(title='Klaster')
+plt.tight_layout()
+plt.show()

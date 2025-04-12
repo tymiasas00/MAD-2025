@@ -113,5 +113,21 @@ for index, row in data.iterrows():
         movie_isTopCritic = [row['isTopCritic']]
         movie_originalScore = [row['originalScore']]
 
+# Dodaj ostatni film (nie został dodany, bo nie ma kolejnego, który by go "wyzwolił")
+movies_data['id'].append(movie_id)
+movies_data['tomatoMeter'].append(movie_tomato_meter)
+movies_data['audienceScore'].append(movie_audience_score)
+movies_data['scoreSentiment'].append(sum(movie_sentiment_score)/len(movie_sentiment_score))
+movies_data['runtimeMinutes'].append(runtime_minutes)
+movies_data['genre'].append(genre)
+movies_data['originalLanguage'].append(original_language)
+movies_data['director'].append(director)
+movies_data['topCriticRatio'].append(sum(movie_isTopCritic) / len(movie_isTopCritic))
+movies_data['min_originalScore'].append(min(movie_originalScore))
+movies_data['max_originalScore'].append(max(movie_originalScore))
+movies_data['mean_originalScore'].append(sum(movie_originalScore) / len(movie_originalScore))
+movies_data['median_originalScore'].append(pd.Series(movie_originalScore).median())
+
+
 movies_data = pd.DataFrame(movies_data)
 
