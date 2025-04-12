@@ -30,7 +30,7 @@ columns_to_drop = [
     'rating', 'ratingContents',
     'boxOffice', 'writer', 'distributor', 'soundMix', 'reviewState', 'reviewUrl',
     'reviewText','title','reviewId','creationDate','releaseDateStreaming','releaseDateTheaters',
-    'publicatioName',
+    'publicationName',
 ]
 data = data.drop(columns=columns_to_drop)
 
