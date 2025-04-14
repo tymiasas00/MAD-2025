@@ -10,7 +10,7 @@ from data_analysis import movies_data  # Zakładamy gotowy DataFrame
 
 # Parametry DBSCAN
 eps_value = 1  # wartość do zmiany po analizie wykresu k-Distance
-min_samples_value = 5
+min_samples_value = 7
 
 # Lista cech
 features = [
