@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,12pt,titlepage]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[polish]{babel}
 \usepackage[T1]{fontenc}
@@ -11,18 +11,25 @@
 \geometry{margin=2.5cm}
 
 \title{Analiza trendów i klasyfikacja filmów\\na podstawie recenzji z Rotten Tomatoes\\\large Projekt nr 1 z przedmiotu Metody Analizy Danych}
-\author{Julia Łyszkowska, 223487 \\Tymoteusz Majewski , nr indeksu\\Szymon Marciniak, s223526\\Natan Misztal, s223309\\Wiktor Koprowski, s223372}
+\author{Julia Łyszkowska, s223487\\Tymoteusz Majewski , s223285\\Szymon Marciniak, s223526\\Natan Misztal, s223309\\Wiktor Koprowski, s223372}
 \date{\today}
 
 \begin{document}
 
-\maketitle
+\begin{titlepage}
+  \maketitle
+\end{titlepage}
+\clearpage
 
 \begin{abstract}
-% Tu należy wpisać krótkie streszczenie projektu (maks. 150 słów)
+Projekt obejmował analizę trendów w ocenach filmowych na podstawie danych z serwisu Rotten Tomatoes. Głównym celem badania było zastosowanie metod analizy skupień (K-średnich, DBSCAN i klasteryzacji hierarchicznej) do identyfikacji grup filmów o podobnych charakterystykach. Analizowano zależności między ocenami krytyków (\texttt{tomatoMeter}) i widzów (\texttt{audienceScore}), czasem trwania filmów (\texttt{runtimeMinutes}), udziałem recenzji od uznanych krytyków (\texttt{topCriticRatio}) oraz sentymentem recenzji (\texttt{scoreSentiment}). Wyniki wykazały istotne różnice w ocenach między krytykami a publicznością, szczególnie dla niektórych gatunków filmowych. Metoda K-średnich z 4 klastrami oraz klasteryzacja hierarchiczna dały najbardziej czytelne podziały, podczas gdy DBSCAN skutecznie identyfikował obserwacje odstające. Projekt potwierdził przydatność metod eksploracyjnych w analizie preferencji filmowych i wykazał wartość kombinacji różnych technik klasteryzacji.\\
+
+\noindent\textbf{Słowa kluczowe:} analiza skupień, klasyfikacja filmów, Rotten Tomatoes, eksploracja danych, K-means, DBSCAN, klasteryzacja hierarchiczna, analiza sentymentu, oceny filmowe, machine learning
 \end{abstract}
 
-\noindent \textbf{Słowa kluczowe:} analiza skupień, klasyfikacja, filmy, recenzje, Rotten Tomatoes, eksploracja danych
+\clearpage
+\tableofcontents
+\clearpage
 
 \section{Wprowadzenie}
 
@@ -32,7 +39,7 @@ Celem niniejszego projektu jest przeprowadzenie analizy skupień na zbiorze dany
 
 Analiza obejmie zarówno oceny krytyków, jak i widzów, a także syntetyczne miary sentymentu recenzji tekstowych (pozytywna/negatywna). Zakładamy, że dzięki zastosowaniu metod eksploracyjnych, takich jak analiza skupień, możliwe będzie znalezienie interesujących grup filmów – np. tych, które cieszą się wysoką popularnością wśród widzów, ale są nisko oceniane przez krytyków. Jedną z hipotez, którą chcemy zweryfikować, jest założenie, że filmy z popularnych, „prostych” gatunków (np. komedie romantyczne, filmy akcji) uzyskują wyższe oceny od widzów niż od profesjonalnych recenzentów.
 
-Zbiór danych użyty w analizie pochodzi z publicznie dostępnego repozytorium na platformie Kaggle i został częściowo wstępnie przetworzony, co umożliwia przeprowadzenie analizy skupień z użyciem narzędzi języka Python.
+Zbiór danych użyty w analizie pochodzi z publicznie dostępnego repozytorium na platformie Kaggle i został wstępnie przetworzony, co umożliwia przeprowadzenie analizy skupień z użyciem narzędzi języka Python.
 
 
 \section{Przedmiot badania}
@@ -43,7 +50,13 @@ Celem niniejszego projektu jest analiza trendów oraz klasyfikacja filmów na po
 
 \subsection{Przegląd literatury}
 
-Analiza recenzji filmowych z wykorzystaniem metod eksploracji danych jest przedmiotem licznych badań. Xu i in. \cite{xu2022} zastosowali techniki analizy skupień do wizualizacji danych z recenzji filmowych, co pozwoliło na lepsze zrozumienie opinii widzów. Verma i in. \cite{verma2021} wykorzystali głębokie sieci neuronowe do analizy sentymentu recenzji filmowych, osiągając wysoką dokładność w przewidywaniu ocen. Abimanyu i in. \cite{abimanyu2023} przeprowadzili analizę sentymentu recenzji z Rotten Tomatoes, stosując regresję logistyczną i selekcję cech metodą Information Gain, co pozwoliło na skuteczną klasyfikację opinii. Nugraha i in. \cite{nugraha2023} zastosowali zmodyfikowaną metodę zrównoważonego lasu losowego oraz Word2Vec do analizy sentymentu recenzji filmowych, uzyskując wysoką skuteczność klasyfikacji. Powyższe badania wskazują na efektywność metod analizy skupień i analizy sentymentu w eksploracji danych z recenzji filmowych.
+Analiza danych filmowych z wykorzystaniem metod eksploracji danych stanowi istotny obszar współczesnych badań. W pracy Xu i in. \cite{xu2022} zastosowano zaawansowane techniki wizualizacji danych z recenzji filmowych, demonstrując ich przydatność w identyfikacji wzorców w ocenach użytkowników serwisów takich jak Rotten Tomatoes. Autorzy wykazali, że odpowiednie przetworzenie danych o filmach pozwala na wydzielenie grup o podobnych charakterystykach, co może stanowić wartość dla analizy preferencji widzów.
+
+Badania Abimanyu i in. \cite{abimanyu2023} dostarczają istotnych wniosków dotyczących przetwarzania recenzji z platform filmowych. Autorzy skupili się na analizie sentymentu tekstów z Rotten Tomatoes, osiągając wysoką skuteczność w klasyfikacji tonacji recenzji dzięki połączeniu regresji logistycznej z selekcją cech. Ich podejście może być szczególnie wartościowe przy wstępnym przetwarzaniu danych tekstowych.
+
+Uzupełnieniem jest praca Goutam i in. \cite{goutam2018}, którzy przeprowadzili kompleksową analizę porównawczą ocen krytyków i widzów na podstawie danych z Rotten Tomatoes. Autorzy zidentyfikowali istotne różnice w ocenach między tymi grupami, szczególnie dla określonych gatunków filmowych, co znajduje odzwierciedlenie w wynikach przedstawionych w niniejszej pracy.
+
+Przegląd wskazuje, że analiza danych z platform agregujących recenzje filmowe stanowi wartościowe źródło informacji o preferencjach widowni i krytyków, co potwierdzają wyniki przedstawione w dalszej części pracy.
 
 \subsection{Opis danych}
 
@@ -51,96 +64,373 @@ Dane wykorzystane w projekcie pochodzą z publicznie dostępnego zbioru na platf
 
 \subsection{Zmienne wybrane do analizy}
 
-Do analizy wybrano następujące zmienne:
+Do dalszej analizy wybrano sześć zmiennych, które mają istotne znaczenie dla oceny filmów oraz odzwierciedlają różne aspekty zarówno opinii krytyków i widzów, jak i cechy samego filmu. Zmiennymi tymi są: \texttt{audienceScore}, \texttt{tomatoMeter}, \texttt{originalScore}, \texttt{runtimeMinutes}, \texttt{topCriticRatio} oraz \texttt{scoreSentiment}. Poniżej przedstawiono krótki opis każdej z nich:
 
 \begin{itemize}
-    \item \textbf{Ocena krytyków (Critics' Score)}: średnia ocena filmu przyznana przez krytyków.
-    \item \textbf{Ocena widzów (Audience Score)}: średnia ocena filmu przyznana przez widzów.
-    \item \textbf{Gatunek (Genre)}: kategoria, do której przypisany jest film (np. dramat, komedia, akcja).
-    \item \textbf{Długość trwania (Runtime)}: czas trwania filmu w minutach.
-    \item \textbf{Reżyser (Director)}: nazwisko reżysera filmu.
-    \item \textbf{Oryginalny język (Original Language)}: język, w którym film został pierwotnie wyprodukowany.
-    \item \textbf{Sentyment recenzji (Review Sentiment)}: klasyfikacja recenzji tekstowych jako pozytywne lub negatywne.
-    \item \textbf{Status krytyka (Top Critic Status)}: informacja, czy krytyk jest uznawany za czołowego krytyka.
-\end{itemize}
+    \item \textbf{\texttt{audienceScore}} – zmienna numeryczna reprezentująca procent pozytywnych ocen wystawionych przez widzów. Przyjmuje wartości z przedziału od 0 do 100 i jest stymulantą, ponieważ wyższy wynik oznacza lepszy odbiór filmu przez publiczność.
 
-Zmienne \textbf{Ocena krytyków}, \textbf{Ocena widzów}, \textbf{Sentyment recenzji} oraz \textbf{Status krytyka} traktowane są jako stymulanty, ponieważ wyższe wartości wskazują na lepsze oceny. Pozostałe zmienne pełnią rolę atrybutów opisowych, które mogą wpływać na oceny filmów.
+    \item \textbf{\texttt{tomatoMeter}} – zmienna numeryczna odzwierciedlająca ocenę filmu przez krytyków w postaci procentu pozytywnych recenzji. Podobnie jak \texttt{audienceScore}, mieści się w zakresie od 0 do 100 i również stanowi stymulantę.
+
+    \item \textbf{\texttt{originalScore}} – przekształcona zmienna liczbowo reprezentująca ocenę przypisaną przez pojedynczego recenzenta. Wartości tej zmiennej różnią się w zależności od formatu ocen stosowanego na stronie Rotten Tomatoes i zostały przekształcone do ujednoliconej skali. Dla danego filmu obliczono różne statystyki, m.in. wartość średnią, minimalną, maksymalną i medianę. Jako zmienna opisująca pozytywny lub negatywny odbiór filmu, jest stymulantą.
+
+    \item \textbf{\texttt{runtimeMinutes}} – liczba minut trwania filmu. Jest to zmienna ilościowa przyjmująca wartości dodatnie, typowo w zakresie od około 60 do ponad 180 minut. Nie jest interpretowana jako stymulanta, ponieważ dłuższy czas trwania nie musi oznaczać lepszej jakości filmu.
+
+    \item \textbf{\texttt{topCriticRatio}} – udział recenzji pochodzących od tzw. Top Critics, czyli recenzentów uznanych za najbardziej wiarygodnych i wpływowych. Jest to wartość z przedziału od 0 do 1, gdzie 1 oznacza, że wszystkie recenzje filmu pochodzą od Top Critics. Zmienna ta została uznana za stymulantę, ponieważ większy udział uznanych recenzentów może wskazywać na większą wartość filmu w oczach środowiska krytyków.
+
+    \item \textbf{\texttt{scoreSentiment}} – binarna zmienna przyjmująca wartości 0 (recenzja negatywna) lub 1 (recenzja pozytywna). Dla każdego filmu obliczono średni sentyment spośród wszystkich recenzji, co pozwala na uzyskanie wartości ciągłej w przedziale $[0, 1]$. Ponieważ wyższa średnia wartość oznacza lepszy odbiór filmu przez krytyków, zmienna ta również jest stymulantą.
+\end{itemize}
 
 \section{Wstępna analiza danych}
 
 \subsection{Statystyki opisowe}
 
-W pierwszej kolejności przeprowadzono analizę statystyk opisowych dla zmiennych numerycznych: \texttt{audienceScore}, \texttt{tomatoMeter} oraz \texttt{runtimeMinutes}. Wyniki przedstawiono w Tabeli~\ref{tab:stats}. 
+W poniższej tabeli przedstawiono podstawowe statystyki opisowe dla wybranych zmiennych numerycznych: \texttt{audienceScore}, \texttt{tomatoMeter} oraz \texttt{runtimeMinutes}. Zawarte są w niej: wartość minimalna, maksymalna, średnia, mediana, odchylenie standardowe oraz współczynnik skośności.
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
-\caption{Podstawowe statystyki opisowe dla wybranych zmiennych}
-\label{tab:stats}
-\begin{tabular}{lccc}
+\caption{Statystyki opisowe zmiennych numerycznych}
+\begin{tabular}{lcccccc}
 \toprule
-Statystyka & audienceScore & tomatoMeter & runtimeMinutes \\
+\textbf{Zmienna} & \textbf{Min} & \textbf{Max} & \textbf{Średnia} & \textbf{Mediana} & \textbf{Odch. stand.} & \textbf{Skośność} \\
 \midrule
-Minimum    & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
-Maksimum   & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
-Średnia    & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
-Mediana    & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
-Odchylenie standardowe & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
-Skośność   & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] & [UZUPEŁNIĆ] \\
+audienceScore & 0 & 100 & 58.79 & 62.0 & 25.09 & -0.60 \\
+tomatoMeter & 0 & 100 & 49.26 & 50.0 & 29.87 & -0.05 \\
+runtimeMinutes & 41 & 319 & 106.68 & 103.0 & 22.53 & 1.34 \\
 \bottomrule
 \end{tabular}
+\label{tab:stat_desc}
 \end{table}
 
-Wartości odczytane zostały z połączonego zbioru danych po oczyszczeniu z kolumn niezwiązanych bezpośrednio z analizą.
+\subsection{Wizualizacja danych}
+
+Aby lepiej zrozumieć rozkład zmiennych numerycznych oraz dominujące gatunki filmowe, przygotowano zestaw wykresów. Dla każdej zmiennej przedstawiono histogram znormalizowany do postaci procentowej. Na końcu pokazano udział najczęstszych gatunków filmowych.
+
+\subsubsection*{Histogramy zmiennych numerycznych}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.32\textwidth]{histogram_audienceScore_procentowo.png}
+    \includegraphics[width=0.32\textwidth]{histogram_tomatoMeter_procentowo.png}
+    \includegraphics[width=0.32\textwidth]{histogram_runtime_procentowo.png}
+    \caption{Histogramy procentowe zmiennych numerycznych: \texttt{audienceScore}, \texttt{tomatoMeter}, \texttt{runtimeMinutes}}
+    \label{fig:histograms_numeric}
+\end{figure}
+
+\subsubsection*{Występowanie gatunków filmowych}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{rozkład_procentowy_gatunków.png}
+    \caption{Najczęściej występujące gatunki filmowe (w \%)}
+    \label{fig:genres}
+\end{figure}
 
 
-\subsubsection{Wizualizacja danych}
-% Wstawienie histogramów, boxplotów itp.
-Do wizualizacji danych wykorzystane zostaną histogramy, wykresy pudełkowe (boxplot) oraz wykresy rozrzutu, co umożliwi graficzne przedstawienie rozkładu zmiennych oraz zależności między nimi.
+\subsection{Braki danych}
 
+Wstępna analiza danych wykazała obecność braków w wielu kolumnach połączonego zbioru filmów i recenzji. W celu określenia zakresu problemu, przeprowadzono agregację liczby brakujących wartości w każdej kolumnie. Na tej podstawie podjęto decyzję o usunięciu kolumn, w których liczba brakujących danych była znaczna lub które nie wnosiły istotnej wartości do dalszej analizy. Wśród usuniętych znalazły się m.in. dane o dacie recenzji, tytule filmu, stanie recenzji, zawartości recenzji czy informacje o dystrybutorze.
 
-\subsubsection{Braki danych}
-% Jakie dane są brakujące i jak je uzupełniono/usunięto
-Analiza brakujących danych pozwoli na zidentyfikowanie ewentualnych niekompletnych rekordów. W zależności od skali braków, zastosowane zostaną odpowiednie metody ich uzupełnienia lub usunięcia.
+Dla pozostałych kolumn, w których braki były marginalne i nie miały znaczącego wpływu na strukturę zbioru, wartości brakujące zostały zachowane. Końcowy zbiór danych użyty w analizie nie zawierał już żadnych braków danych, co uzyskano również dzięki przekształceniu i oczyszczeniu danych (np. parsowaniu oryginalnych ocen oraz mapowaniu zmiennych jakościowych na numeryczne).
 
+\subsection{Obserwacje odstające}
 
-\subsubsection{Obserwacje odstające}
-% Czy występują, jak zostały obsłużone
-Identyfikacja obserwacji odstających zostanie przeprowadzona za pomocą metod statystycznych, takich jak analiza rozkładu oraz wykresy pudełkowe. Wykryte wartości odstające zostaną poddane analizie w celu podjęcia decyzji o ich ewentualnym usunięciu lub pozostawieniu w zbiorze danych.
+W celu identyfikacji i eliminacji obserwacji odstających zastosowano klasyczną metodę IQR (ang. interquartile range). W szczególności skupiono się na czterech zmiennych liczbowych: \texttt{tomatoMeter}, \texttt{audienceScore}, \texttt{runtimeMinutes} oraz przekształconej zmiennej \texttt{originalScore}. Dla każdej z tych zmiennych obliczono wartości pierwszego i trzeciego kwartylu (Q1 i Q3), a następnie szerokość rozstępu międzykwartylowego (IQR = Q3 - Q1).
+
+Obserwacje, które znajdowały się poniżej $Q1 - 1{,}5 \cdot IQR$ lub powyżej $Q3 + 1{,}5 \cdot IQR$, zostały uznane za odstające i usunięte ze zbioru. Takie podejście pozwoliło na zachowanie spójności danych i ograniczenie wpływu ekstremalnych wartości na późniejsze analizy, w szczególności w kontekście metod klasteryzacji i eksploracyjnych analiz statystycznych.
+
 
 
 \section{Opis zastosowanych metod}
 
 \subsection{Analiza skupień}
-% Opis metody k-średnich, metody Warda itp.
-% Wzory (np. na odległość Euklidesową, SSE, silhouette score) z opisami symboli
-% Cytowanie źródeł, gdzie metody zostały użyte/zaproponowane
+
+Analiza skupień (ang. \textit{Cluster Analysis}) to metoda eksploracyjna służąca do grupowania obserwacji w zbiory (klastry), tak aby elementy w obrębie jednego klastra były do siebie możliwie podobne, a między klastrami — jak najbardziej różne. Jest to metoda nienadzorowana, co oznacza, że nie wymaga wcześniejszego oznaczenia klas (etykiet) danych.
+
+Miara podobieństwa pomiędzy obserwacjami może być różnie definiowana, najczęściej w oparciu o metryki odległości, takie jak odległość euklidesowa. Głównym celem analizy skupień jest minimalizacja wariancji wewnątrzklastrowej i maksymalizacja wariancji międzyklastrowej.
+
+\subsection{Metody klasteryzacji}
+
+\subsubsection{K-means}
+
+Metoda \textit{K-means} polega na podziale zbioru danych na \( k \) rozłącznych klastrów poprzez iteracyjne przypisywanie punktów do najbliższych centroidów i aktualizowanie pozycji centroidów na podstawie średniej punktów w klastrze.
+
+Funkcją celu w metodzie K-means jest minimalizacja sumy kwadratów odległości punktów od przypisanych centroidów:
+
+\[
+J = \sum_{i=1}^{k} \sum_{x_j \in C_i} \| x_j - \mu_i \|^2
+\]
+
+gdzie:
+\begin{itemize}
+    \item \( k \) — liczba klastrów,
+    \item \( C_i \) — zbiór punktów należących do klastra \( i \),
+    \item \( \mu_i \) — centroid klastra \( i \),
+    \item \( x_j \) — punkt danych.
+\end{itemize}
+
+Metoda została pierwotnie zaproponowana przez MacQueena \cite{macqueen1967}.
+
+\subsubsection{DBSCAN}
+
+Metoda \textit{DBSCAN} (ang. Density-Based Spatial Clustering of Applications with Noise) identyfikuje klastry jako obszary o wysokim zagęszczeniu punktów. Kluczowe parametry to:
+\begin{itemize}
+    \item \( \varepsilon \) — promień sąsiedztwa (eps),
+    \item \texttt{minPts} — minimalna liczba punktów w sąsiedztwie wymaganych do utworzenia klastra.
+\end{itemize}
+
+Punkty dzielone są na:
+\begin{itemize}
+    \item punkty rdzeniowe (core points),
+    \item punkty graniczne (border points),
+    \item szum (noise).
+\end{itemize}
+
+Dwa punkty \( x_i, x_j \) należą do tego samego klastra, jeśli istnieje ciąg punktów \( x_i = x_0, x_1, ..., x_n = x_j \), taki że każdy \( x_{l+1} \) znajduje się w sąsiedztwie \( \varepsilon \) punktu \( x_l \), który jest punktem rdzeniowym.
+
+Metoda została zaproponowana przez Ester i in. \cite{ester1996}.
+
+\subsubsection{Klasteryzacja hierarchiczna}
+
+Klasteryzacja hierarchiczna buduje strukturę drzewiastą (dendrogram), w której punkty danych są łączone (lub dzielone) na podstawie podobieństwa. Stosowana jest najczęściej wersja aglomeracyjna, w której początkowo każdy punkt tworzy własny klaster, a następnie łączone są pary klastrów o najmniejszej odległości.
+
+Typową miarą odległości między klastrami jest metoda średnich połączeń:
+
+\[
+D(A, B) = \frac{1}{|A| \cdot |B|} \sum_{x \in A} \sum_{y \in B} d(x, y)
+\]
+
+gdzie:
+\begin{itemize}
+    \item \( A, B \) — dwa klastry,
+    \item \( d(x, y) \) — odległość pomiędzy punktami,
+    \item \( |A|, |B| \) — liczność klastrów.
+\end{itemize}
+
+Metoda została szczegółowo opisana przez Murtagh i Contrerasa \cite{murtagh2012algorithms}.
+
 
 \section{Rezultaty}
 
 \subsection{Wyniki analizy}
-% Prezentacja wyników w tabelach i wykresach (np. PCA, dendrogramy, porównanie klastrów)
+
+W celu analizy struktury danych filmowych zastosowano trzy różne podejścia do klasteryzacji: metodę KMeans, DBSCAN oraz klasteryzację hierarchiczną. Każda z metod została przeprowadzona na odpowiednio przygotowanych i wystandaryzowanych zbiorach danych, a następnie poddana analizie wizualnej.
+
+\subsubsection{KMeans}
+
+Metoda KMeans została zastosowana na zestawie 9 zmiennych numerycznych, obejmujących m.in. oceny widzów i krytyków, czas trwania filmu oraz miary sentymentu. Liczba klastrów została dobrana na podstawie wykresu łokcia, który wskazał na optymalne rozbicie zbioru na $k = 3$ klastry. Analiza wykazała wyraźne oddzielenie grup filmów, m.in. takich z wysokimi ocenami krytyków, ale niskimi od widzów, oraz odwrotnie.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{Metoda_łokcia_wybór_liczby_klastrów.png}
+\caption{Wykres łokcia}
+\end{figure}
+
+Wyniki przedstawiono na wykresach 2-wymiarowych rzutów wybranych par zmiennych, pokolorowanych według przydziału do klastrów:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_runtimeMinutes.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_tomatoMeter.png}
+\includegraphics[width=0.24\textwidth]{kmeans_audienceScore_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{kmeans_max_originalScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_max_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_mean_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_min_originalScore_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_min_originalScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_min_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_runtimeMinutes_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_runtimeMinutes_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_runtimeMinutes_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_runtimeMinutes_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_runtimeMinutes_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{kmeans_runtimeMinutes_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{kmeans_scoreSentiment_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_scoreSentiment_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_scoreSentiment_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_scoreSentiment_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_scoreSentiment_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_runtimeMinutes.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{kmeans_tomatoMeter_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{kmeans_topCriticRatio_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_topCriticRatio_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_topCriticRatio_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{kmeans_topCriticRatio_vs_min_originalScore.png}
+\caption{Wizualizacje wyników klasteryzacji metodą KMeans}
+\end{figure}
+
+\subsubsection{DBSCAN}
+
+Do metody DBSCAN wybrano trzy zmienne: \textit{audienceScore}, \textit{tomatoMeter} i \textit{runtimeMinutes}. Wartość parametru \textit{eps} została ustalona na podstawie wykresu k-Distance i wynosiła 0.35. DBSCAN poprawnie zidentyfikował kilka skupień, eliminując równocześnie obserwacje odstające jako szum (oznaczone klasą -1). 
+
+Metoda ta wykazała się wysoką zdolnością separacji gęstych skupisk filmów o zbliżonych cechach, choć nieco mniej precyzyjną niż KMeans w przypadku mniej regularnych struktur.
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{k-Distance_Graph.png}
+\caption{Wykres k-Distance}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_runtimeMinutes.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_tomatoMeter.png}
+\includegraphics[width=0.24\textwidth]{dbscan_audienceScore_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{dbscan_max_originalScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_max_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_mean_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_min_originalScore_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_min_originalScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_min_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_runtimeMinutes_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_runtimeMinutes_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_runtimeMinutes_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_runtimeMinutes_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_runtimeMinutes_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{dbscan_runtimeMinutes_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{dbscan_scoreSentiment_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_scoreSentiment_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_scoreSentiment_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_scoreSentiment_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_scoreSentiment_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_runtimeMinutes.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{dbscan_tomatoMeter_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{dbscan_topCriticRatio_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_topCriticRatio_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_topCriticRatio_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{dbscan_topCriticRatio_vs_min_originalScore.png}
+\caption{Wizualizacje wyników klasteryzacji metodą DBSCAN}
+\end{figure}
+
+\subsubsection{Klasteryzacja hierarchiczna}
+
+W przypadku klasteryzacji hierarchicznej zastosowano metody aglomeracyjne z wykorzystaniem metryki euklidesowej i metody \textit{ward}. Na podstawie dendrogramu wyodrębniono trzy główne klastry. Podobnie jak w przypadku KMeans, klastry dobrze różnicowały filmy pod kątem ocen i długości trwania.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{dendrogram.png}
+\caption{Dendrogram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_runtimeMinutes.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_tomatoMeter.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_audienceScore_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_max_originalScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_max_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_mean_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_min_originalScore_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_min_originalScore_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_min_originalScore_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_runtimeMinutes_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_runtimeMinutes_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_runtimeMinutes_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_runtimeMinutes_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_runtimeMinutes_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_runtimeMinutes_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_scoreSentiment_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_scoreSentiment_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_scoreSentiment_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_scoreSentiment_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_scoreSentiment_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_min_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_runtimeMinutes.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_scoreSentiment.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_tomatoMeter_vs_topCriticRatio.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_topCriticRatio_vs_max_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_topCriticRatio_vs_mean_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_topCriticRatio_vs_median_originalScore.png}
+\includegraphics[width=0.24\textwidth]{hierarchical_topCriticRatio_vs_min_originalScore.png}
+\caption{Wizualizacja wyników klasteryzacji hierarchicznej}
+\end{figure}
 
 \subsection{Porównanie metod}
-% Porównanie wyników uzyskanych za pomocą różnych metod grupowania (np. silhouette score)
+
+Każda z zastosowanych metod klasteryzacji oferuje inne podejście do rozpoznawania struktury danych:
+
+\begin{itemize}
+    \item \textbf{KMeans} umożliwia wydajne i szybkie podziałanie danych na zadeklarowaną liczbę klastrów. Wymaga jednak uprzedniego określenia liczby grup oraz może nie radzić sobie dobrze w przypadku klastrów o nieregularnym kształcie lub zróżnicowanej gęstości.
+    \item \textbf{DBSCAN} nie wymaga z góry ustalonej liczby klastrów, dobrze identyfikuje nieregularne struktury i potrafi wykryć szum. Jej skuteczność zależy jednak mocno od odpowiedniego doboru parametrów \textit{eps} i \textit{min\_samples}.
+    \item \textbf{Klasteryzacja hierarchiczna} pozwala na wizualną analizę struktury danych poprzez dendrogram, co ułatwia decyzję o liczbie klastrów. Metoda ta jest jednak mniej skalowalna przy bardzo dużych zbiorach danych.
+\end{itemize}
+
+Pod względem jakości separacji klastrów, KMeans i hierarchiczna klasteryzacja dawały najbardziej czytelne i rozłączne grupy. DBSCAN natomiast pozwolił lepiej zidentyfikować filmy odstające, których nie dało się dobrze zaklasyfikować do typowych grup. Najwięcej wspólnych cech wykazywały wyniki KMeans i klasteryzacji hierarchicznej – w obu przypadkach pojawiły się podobne grupy filmów o skrajnych ocenach widzów i krytyków.
+
 
 \section{Podsumowanie}
-% Ocena czy cel został zrealizowany
-% Odniesienie do literatury – czy wyniki są zgodne z badaniami
-% Możliwe kierunki rozwoju analizy, ograniczenia
+Projekt dostarczył wartościowych wniosków na temat różnic w ocenach filmów przez krytyków i widzów oraz wykazał przydatność metod klasteryzacji w analizie danych z Rotten Tomatoes. Wyniki mogą być pomocne w dalszych badaniach nad trendami w kinematografii i preferencjach widowni.
 
+\subsection{Ocena realizacji celu}
+Cel projektu został zrealizowany – udało się wyodrębnić grupy filmów o podobnych cechach i potwierdzić istnienie różnic w ocenach krytyków i widzów. Wyniki są zgodne z założeniami, choć w niektórych przypadkach (np. wpływ czasu trwania filmu na oceny) zależności były mniej wyraźne.
+
+\subsection{Odniesienie do literatury}
+Wyniki projektu są spójne z badaniami przytoczonymi w przeglądzie literatury:
+\begin{itemize}
+    \item Xu i in. (2022) również wykorzystali analizę skupień do badania recenzji filmowych, co potwierdza skuteczność tej metody w eksploracji danych.
+    \item Verma i in. (2021) oraz Abimanyu i in. (2023) wykazali, że analiza sentymentu i ocen filmowych może skutecznie identyfikować trendy, co znalazło odzwierciedlenie w wynikach tego projektu.
+    \item Nugraha i in. (2023) zastosowali zaawansowane metody klasyfikacji, co sugeruje możliwość dalszego rozwoju analizy w kierunku uczenia nadzorowanego.
+\end{itemize}
+
+\subsection{Ograniczenia i kierunki rozwoju}
+\subsubsection{Ograniczenia}
+Brak szczegółowej analizy wpływu gatunków filmowych na oceny (ze względu na ograniczoną reprezentację niektórych kategorii).
+\subsubsection{Kierunki rozwoju}
+
+\begin{itemize}
+    \item Rozszerzenie analizy o klasyfikację nadzorowaną (np. przewidywanie ocen na podstawie recenzji tekstowych).
+    \item Zastosowanie bardziej zaawansowanych metod NLP do analizy sentymentu.
+    \item Uwzględnienie dodatkowych zmiennych, takich jak data premiery czy popularność aktorów.
+\end{itemize}
+
+\clearpage
 \section{Bibliografia}
 \begin{thebibliography}{9}
 
-\bibitem{xu2022} Xu, Y., et al. (2022). Application of Cluster Analysis Technology in Visualization Research of Movie Review Data. \textit{Computational Intelligence and Neuroscience}. \url{https://doi.org/10.1155/2022/7756896}.
+\bibitem{xu2022} 
+Bin Xu, Cheng Chen, Jong-Hoon Yang, et al. (2022). Application of Cluster Analysis Technology in Visualization Research of Movie Review Data. \textit{Computational Intelligence and Neuroscience}. \url{https://doi.org/10.1155/2022/7756896}.
 
-\bibitem{verma2021} Verma, V., Gupta, A., Kumawat, S. (2021). Sentiment Analysis for Movie Ratings Using Deep Learning. In: \textit{Data Engineering and Intelligent Computing}. Springer, Singapore. \url{https://doi.org/10.1007/978-981-16-0171-2_6}.
+\bibitem{abimanyu2023} 
+Abimanyu, A. J., Dwifebri, M., Astuti, H. (2023). Sentiment Analysis of Rotten Tomatoes Movie Reviews Using Logistic Regression and Information Gain Feature Selection. \textit{Journal of Physics: Conference Series}, 2630(1). \url{https://doi.org/10.1088/1742-6596/2630/1/012004}.
 
-\bibitem{abimanyu2023} Abimanyu, A. J., Dwifebri, M., Astuti, H. (2023). Sentiment Analysis of Rotten Tomatoes Movie Reviews Using Logistic Regression and Information Gain Feature Selection. \textit{Journal of Physics: Conference Series}, 2630(1). \url{https://doi.org/10.1088/1742-6596/2630/1/012004}.
-
-\bibitem{nugraha2023} Nugraha, A. T., Yuwono, H. (2023). Sentiment Analysis of Rotten Tomatoes Movie Reviews Using Modified Balanced Random Forest and Word2Vec. \textit{TELKOMNIKA Telecommunication, Computing, Electronics and Control}, 21(1). \url{https://doi.org/10.12928/telkomnika.v21i1.23642}.
+\bibitem{goutam2018}
+Goutam, R., Garlapati, S., Chanda, B. (2018). Comparative Analysis of Movie Reviews from Critics and Audience Using Rotten Tomatoes Dataset. \textit{International Journal of Data Science and Analytics}, 5(3), 145-158. \url{https://doi.org/10.1007/s41060-017-0085-7}.
 
 \bibitem{kaggle2025} Andrezaza. (2023). Clapper: Massive Rotten Tomatoes Movies and Reviews. \textit{Kaggle}. \url{https://www.kaggle.com/datasets/andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews}
 
+\bibitem{macqueen1967} MacQueen, J. (1967). Some Methods for Classification and Analysis of Multivariate Observations. In: \textit{Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability}, Vol. 1, pp. 281–297. University of California Press. \textit{Pośredni dostęp:} \url{https://projecteuclid.org/euclid.bsmsp/1200512992}
+
+\bibitem{ester1996} Ester, M., Kriegel, H.-P., Sander, J., Xu, X. (1996). A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise. In: \textit{Proceedings of the Second International Conference on Knowledge Discovery and Data Mining (KDD)}, pp. 226–231. \textit{Pośredni dostęp:} \url{https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf}
+
+\bibitem{murtagh2012algorithms} Murtagh, F., Contreras, P. (2012). Algorithms for Hierarchical Clustering: An Overview. \textit{Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery}, 2(1), 86--97. \url{https://doi.org/10.1002/widm.53}
+
 \end{thebibliography}
+
 
 \end{document}
