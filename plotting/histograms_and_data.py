@@ -1,4 +1,4 @@
-from data_analysis import movies_data  # Import przetworzonego DataFrame
+from data.data_analysis import movies_data  # Import przetworzonego DataFrame
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import zscore

@@ -1,10 +1,9 @@
-import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
 from itertools import combinations
-from data_analysis import movies_data
+from data.data_analysis import movies_data
 
 # 2. Wybierz tylko kolumny numeryczne do klasteryzacji
 features = [
@@ -38,7 +37,7 @@ plt.tight_layout()
 plt.show()
 
 # 7. Trenuj KMeans z wybraną liczbą klastrów (np. 3)
-kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
 data_clean['kmeans_cluster'] = kmeans.fit_predict(scaled_features)
 
 # 8. Dołącz etykiety klastrów do oryginalnego dataframe

@@ -1,6 +1,6 @@
 import kagglehub
 import pandas as pd
-from  changing_original_score import parse_original_score
+from data.changing_original_score import parse_original_score
 # Pobieram dane z Kaggle
 path = kagglehub.dataset_download(
     "andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews")

@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 from itertools import combinations
 import numpy as np
-from data_analysis import movies_data  # Zakładamy gotowy DataFrame
+from data.data_analysis import movies_data  # Import przetworzonego DataFrame
 
 # Parametry DBSCAN
 eps_value = 1  # wartość do zmiany po analizie wykresu k-Distance

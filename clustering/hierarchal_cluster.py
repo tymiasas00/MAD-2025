@@ -1,12 +1,11 @@
-# Importowanie bibliotek
-import pandas as pd
+# Importowanie niezbędnych bibliotek
 import matplotlib.pyplot as plt
 import seaborn as sns
+from itertools import combinations
 import scipy.cluster.hierarchy as sch
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
-from itertools import combinations
-from data_analysis import movies_data  # Zakładamy, że to gotowy DataFrame
+from data.data_analysis import movies_data  # Import przetworzonego DataFrame
 
 # Parametr: liczba klastrów wybrana na podstawie dendrogramu
 n_clusters = 3
