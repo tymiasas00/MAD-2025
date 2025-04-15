@@ -38,7 +38,8 @@ data_clean['hierarchical_cluster'] = hierarchical.fit_predict(scaled_data)
 
 # Dołączenie etykiet klastrów do oryginalnego DataFrame
 movies_data.loc[data_clean.index, 'hierarchical_cluster'] = data_clean['hierarchical_cluster']
-
+# movies_data.to_csv('movies_data_hierarchical.csv', index=False)
+movies_data_hierarchy = movies_data.copy()
 # Wizualizacja: wszystkie możliwe pary cech
 for x_feature, y_feature in combinations(features, 2):
     plt.figure(figsize=(7, 5))

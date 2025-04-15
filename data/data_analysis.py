@@ -52,7 +52,6 @@ sentiment_map = {'POSITIVE': 1, 'NEGATIVE': 0}
 isTopCritic_map = {True: 1, False: 0}
 data['scoreSentiment'] = data['scoreSentiment'].map(sentiment_map)
 data['isTopCritic'] = data['isTopCritic'].map(isTopCritic_map)
-data.to_csv('reviews_with_movie_info.csv', index=False)
 
 movies_data = {
     'id': [],
@@ -130,4 +129,3 @@ movies_data['median_originalScore'].append(pd.Series(movie_originalScore).median
 
 
 movies_data = pd.DataFrame(movies_data)
-

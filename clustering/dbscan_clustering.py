@@ -1,4 +1,3 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.cluster import DBSCAN
@@ -46,7 +45,8 @@ data_clean['dbscan_cluster'] = dbscan.fit_predict(scaled_data)
 
 # Dodanie etykiet do oryginalnego DataFrame
 movies_data.loc[data_clean.index, 'dbscan_cluster'] = data_clean['dbscan_cluster']
-
+# movies_data.to_csv('movies_data_DBScan.csv', index=False)
+movies_data_DBScan = movies_data.copy()
 # Wizualizacja wszystkich możliwych par
 for x_feature, y_feature in combinations(features, 2):
     plt.figure(figsize=(7, 5))

@@ -42,9 +42,9 @@ data_clean['kmeans_cluster'] = kmeans.fit_predict(scaled_features)
 
 # 8. Dołącz etykiety klastrów do oryginalnego dataframe
 movies_data.loc[data_clean.index, 'kmeans_cluster'] = data_clean['kmeans_cluster']
-
+# movies_data.to_csv('movies_data_KMeans.csv', index=False)
+movies_data_KMeans = movies_data.copy()
 # # 9. Zapisz dane z klastrami
-# data.to_csv('movies_clustered.csv', index=False)
 
 # 10. Wizualizacja
 for x_feature, y_feature in combinations(features, 2):
